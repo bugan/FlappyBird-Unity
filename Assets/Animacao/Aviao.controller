@@ -54,7 +54,7 @@ BlendTree:
   m_BlendParameterY: Blend
   m_MinThreshold: -14
   m_MaxThreshold: 7
-  m_UseAutomaticThresholds: 1
+  m_UseAutomaticThresholds: 0
   m_NormalizedBlendValues: 0
   m_BlendType: 0
 --- !u!1102 &1102795402626167504
