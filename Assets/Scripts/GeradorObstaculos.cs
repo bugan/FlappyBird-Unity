@@ -4,38 +4,49 @@ using UnityEngine;
 
 public class GeradorObstaculos : MonoBehaviour
 {
-    public float tempoParaGerar;
-    public GameObject obstaculoPrefab;
-    private float _cronometro;
-    private bool _iniciarGeracao;
+    [SerializeField]
+    private float tempoParaGerarFacil;
+    [SerializeField]
+    private float tempoParaGerarDificil;
+    [SerializeField]
+    private GameObject obstaculoPrefab;
+    private float cronometro;
+    private bool iniciarGeracao;
+    private ControleDeDificuldade controleDeDificuldade;
 
-    void Awake()
+    private void Awake()
     {
-        this._cronometro = this.tempoParaGerar;
-        this._iniciarGeracao = false;
+        this.cronometro = this.tempoParaGerarFacil;
     }
-
-    void Update()
+    private void Start()
     {
-        if (Input.GetButtonDown("Fire1"))
+        this.controleDeDificuldade = GameObject.FindObjectOfType<ControleDeDificuldade>();
+    }
+    private void Update()
+    {
+        if (Input.GetButtonDown("botaoDireitoMouse"))
         {
-            this._iniciarGeracao = true;
+            this.iniciarGeracao = true;
         }
 
-        if (GameOver.estaJogando && this._iniciarGeracao)
+        if (this.iniciarGeracao)
         {
-            this._cronometro -= Time.deltaTime;
-            if (this._cronometro < 0)
+            this.cronometro -= Time.deltaTime;
+            if (this.cronometro < 0)
             {
-                this._gerar();
-                this._cronometro = this.tempoParaGerar;
+                this.Gerar();
+                this.cronometro = Mathf.Lerp(
+                    this.tempoParaGerarFacil,
+                    this.tempoParaGerarDificil,
+                    this.controleDeDificuldade.Dificuldade
+                    );
             }
         }
     }
 
-    private void _gerar()
+    private void Gerar()
     {
         GameObject obstaculo = GameObject.Instantiate(this.obstaculoPrefab, this.transform, false);
-        obstaculo.GetComponent<Obstaculo>().inicializa();
+        obstaculo.GetComponent<Obstaculo>().Inicializar();
     }
 }

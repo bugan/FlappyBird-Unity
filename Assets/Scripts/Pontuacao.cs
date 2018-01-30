@@ -5,29 +5,51 @@ using UnityEngine.UI;
 
 public class Pontuacao : MonoBehaviour
 {
-
-    private int _pontos;
-    private Text _textoPontuacao;
-    void Awake()
+    private int pontos;
+    private Text textoPontuacao;
+    private AudioSource somPontuacao;
+    private void Awake()
     {
-        this._textoPontuacao = this.GetComponent<Text>();
-        this.reiniciar();
+        this.somPontuacao = this.GetComponent<AudioSource>();
+        this.textoPontuacao = this.GetComponent<Text>();
+
+        this.textoPontuacao.text = "0";
     }
 
-    public void reiniciar()
+    public void Reiniciar()
     {
-        this._pontos = 0;
-        this._atualizaTexto();
+        this.pontos = 0;
+        this.AtualizarTexto();
     }
 
-    public void adicionarPontos(int quantidade)
+    public void Pontuar()
     {
-        this._pontos += quantidade;
-        this._atualizaTexto();
+        this.AdicionarPontos();
+        this.somPontuacao.Play();
     }
 
-    private void _atualizaTexto()
+    private void AdicionarPontos()
     {
-        this._textoPontuacao.text = this._pontos.ToString();
+        this.pontos += 1;
+        this.AtualizarTexto();
+    }
+
+    public void SalvarRecorde()
+    {
+        int recorde = PlayerPrefs.GetInt("recorde");
+        
+        if(this.pontos > recorde){
+            PlayerPrefs.SetInt("recorde",this.pontos);
+        }
+    }
+
+    public int PontuacaoAtual()
+    {
+        return this.pontos;
+    }
+
+    private void AtualizarTexto()
+    {
+        this.textoPontuacao.text = this.pontos.ToString();
     }
 }

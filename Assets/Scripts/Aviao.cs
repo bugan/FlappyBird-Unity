@@ -4,73 +4,74 @@ using UnityEngine;
 
 public class Aviao : MonoBehaviour
 {
+    [SerializeField]
+    private float forca;
+    private Rigidbody2D corpoRigido;
+    private Diretor diretor;
+    private Animator animacao;
+    private PolygonCollider2D colisor;
+    private bool deveImpulsionar;
+    private Vector3 posicaoInicial;
+    private AudioSource somColisao;
 
-    public float forca;
-    private Rigidbody2D _corpoRigido;
-    private GameOver _gameOver;
-    private Animator _animacao;
-    private Transform _transform;
-    private bool _deveImpulsionar;
-    private Vector3 _posicaoInicial;
-    private AudioSource _somColisao;
-
-    void Awake()
+    private void Awake()
     {
-        this._corpoRigido = this.GetComponent<Rigidbody2D>();
-        this._animacao = this.GetComponent<Animator>();
-        this._transform = this.GetComponent<Transform>();
-        this._somColisao = this.GetComponent<AudioSource>();
+        this.corpoRigido = this.GetComponent<Rigidbody2D>();
+        this.animacao = this.GetComponent<Animator>();
+        this.somColisao = this.GetComponent<AudioSource>();
+        this.colisor = this.GetComponent<PolygonCollider2D>();
 
-        this._corpoRigido.simulated = false;
-        this._posicaoInicial = this._transform.position;
+        this.corpoRigido.simulated = false;
+        this.posicaoInicial = this.transform.position;
     }
 
-    void Start()
+    private void Start()
     {
-        this._gameOver = GameObject.FindObjectOfType<GameOver>();
+        this.diretor = GameObject.FindObjectOfType<Diretor>();
     }
 
-    void Update()
+    private void Update()
     {
-        if (GameOver.estaJogando)
+        if (Input.GetButtonDown("botaoDireitoMouse"))
         {
-            if (Input.GetButtonDown("Fire1"))
-            {
-                this._corpoRigido.simulated = true;
-                this._deveImpulsionar = true;
-            }
+            this.corpoRigido.simulated = true;
+            this.deveImpulsionar = true;
         }
     }
 
-    void FixedUpdate()
+    private void FixedUpdate()
     {
-        if (GameOver.estaJogando)
+        if (this.deveImpulsionar)
         {
-            if (this._deveImpulsionar)
-            {
-                this._impulsionar();
-            }
-            
-            this._animacao.SetFloat("VelocidadeY", this._corpoRigido.velocity.y);
+            this.Impulsionar();
+        }
+
+        this.animacao.SetFloat("VelocidadeY", this.corpoRigido.velocity.y);
+    }
+
+    private void OnCollisionEnter2D(Collision2D outro)
+    {
+        if (outro.gameObject.tag != "Teto")
+        {
+            this.somColisao.Play();
+            this.diretor.FinalizarJogo();
+            this.colisor.enabled = false;
+            this.corpoRigido.simulated = false;
         }
     }
 
-    void OnCollisionEnter2D(Collision2D outro)
+    public void Reiniciar()
     {
-        this._somColisao.Play();
-        this._gameOver.finalizarJogo();
+        this.transform.position = this.posicaoInicial;
+        this.colisor.enabled = true;
+        this.corpoRigido.velocity = Vector2.zero;
+        this.corpoRigido.simulated = true;
     }
 
-    public void reiniciar()
+    private void Impulsionar()
     {
-        this.transform.position = this._posicaoInicial;
+        this.corpoRigido.velocity = Vector2.zero;
+        this.corpoRigido.AddForce(Vector2.up * this.forca, ForceMode2D.Impulse);
+        this.deveImpulsionar = false;
     }
-
-    private void _impulsionar()
-    {
-        this._corpoRigido.velocity = Vector2.zero;
-        this._corpoRigido.AddForce(Vector2.up * this.forca, ForceMode2D.Impulse);
-        this._deveImpulsionar = false;
-    }
-
 }

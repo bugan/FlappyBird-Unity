@@ -4,44 +4,28 @@ using UnityEngine;
 
 public class MaoPiscando : MonoBehaviour
 {
-    private bool _clicou;
-    private SpriteRenderer _imagem;
+    private SpriteRenderer imagem;
 
-    void Awake()
+    private void Awake()
     {
-        this._imagem = this.GetComponent<SpriteRenderer>();
-        this._imagem.enabled = true;
-        this._clicou = false;
+        this.imagem = this.GetComponent<SpriteRenderer>();
     }
 
-    void Update()
+    private void Update()
     {
-		
-        if (GameOver.estaJogando)
+        if (Input.GetButtonDown("botaoDireitoMouse"))
         {
-            this._verificaClique();
-            if (this._clicou)
-            {
-               this._habilitarImagem(false);
-            }
-        }
-        else
-        {
-            this._clicou = false;
-			this._habilitarImagem(true);
+            this.MostrarMao(false);
         }
     }
 
-    private void _verificaClique()
+    public void Reiniciar()
     {
-        if (Input.GetButtonDown("Fire1"))
-        {
-            this._clicou = true;
-        }
+        this.MostrarMao(true);
     }
 
-    private void _habilitarImagem(bool ativa)
+    private void MostrarMao(bool ativa)
     {
-        this._imagem.enabled = ativa;
+        this.imagem.enabled = ativa;
     }
 }

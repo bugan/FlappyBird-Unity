@@ -4,24 +4,23 @@ using UnityEngine;
 
 public class Carrossel : MonoBehaviour
 {
-    public float velocidade;
-    private Transform _transform;
-    private Vector3 _posicaoInicial;
-    private float _tamanhoImagem;
-    void Awake()
+    [SerializeField]
+    private VariavelCompartilhadaFloat velocidade;
+    private Vector3 posicaoInicial;
+    private float tamanhoRealDaImagem;
+
+    private void Awake()
     {
-        this._transform = this.GetComponent<Transform>();
-        this._posicaoInicial = this._transform.localPosition;
-        this._tamanhoImagem = this.GetComponent<SpriteRenderer>().size.x;
-        this._tamanhoImagem = this._tamanhoImagem * this.transform.localScale.x;
+        this.posicaoInicial = this.transform.localPosition;
+
+        float tamanhoImagem = this.GetComponent<SpriteRenderer>().size.x;
+        float escalaImagem = this.transform.localScale.x;
+        this.tamanhoRealDaImagem = tamanhoImagem * escalaImagem;
     }
 
-    void Update()
+    private void Update()
     {
-        if (GameOver.estaJogando)
-        {
-            float variacaoDaPosicao = Mathf.Repeat(Time.time * this.velocidade, this._tamanhoImagem);
-            this._transform.localPosition =  this._posicaoInicial + Vector3.left * variacaoDaPosicao;
-        }
+        float deslocamento = Mathf.Repeat(Time.time * this.velocidade.valor, this.tamanhoRealDaImagem);
+        this.transform.localPosition = this.posicaoInicial + Vector3.left * deslocamento;
     }
 }
